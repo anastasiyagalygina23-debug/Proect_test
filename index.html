@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Нейрофотограф — AI fashion-съёмка по селфи</title>
+    <meta
+      name="description"
+      content="Загрузите селфи, опишите образ — сервис соберёт промпт, предложит стили и упакует серию в галерею."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0a0a0b;
+        --cream: #f5f0e8;
+        --gold: #c9a962;
+        --muted: #6b6560;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "DM Sans", system-ui, sans-serif;
+        background: var(--ink);
+        color: var(--cream);
+        background-image: radial-gradient(
+          ellipse 80% 50% at 50% -20%,
+          rgba(201, 169, 98, 0.12),
+          transparent
+        );
+      }
+
+      .wrap {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 4rem 1.5rem 6rem;
+      }
+
+      .eyebrow {
+        text-align: center;
+        font-size: 0.65rem;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: var(--gold);
+      }
+
+      h1 {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-weight: 500;
+        font-size: clamp(2.5rem, 8vw, 4.5rem);
+        text-align: center;
+        margin: 1rem 0 0;
+        line-height: 1.05;
+      }
+
+      .lead {
+        text-align: center;
+        max-width: 32rem;
+        margin: 1.5rem auto 3rem;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .panel {
+        max-width: 28rem;
+        margin: 0 auto;
+        padding: 2rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .label {
+        display: block;
+        font-size: 0.65rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 0.75rem;
+      }
+
+      .dropzone {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 11rem;
+        border-radius: 0.75rem;
+        border: 1px dashed rgba(255, 255, 255, 0.2);
+        background: rgba(10, 10, 11, 0.5);
+        cursor: pointer;
+        overflow: hidden;
+        transition: border-color 0.2s;
+      }
+
+      .dropzone:hover {
+        border-color: rgba(201, 169, 98, 0.5);
+      }
+
+      .dropzone img {
+        max-height: 12rem;
+        width: 100%;
+        object-fit: cover;
+      }
+
+      .dropzone p {
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+
+      textarea {
+        width: 100%;
+        margin-top: 0.75rem;
+        padding: 0.875rem 1rem;
+        border-radius: 0.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(10, 10, 11, 0.8);
+        color: var(--cream);
+        font: inherit;
+        resize: vertical;
+        min-height: 5rem;
+      }
+
+      textarea:focus {
+        outline: 2px solid rgba(201, 169, 98, 0.35);
+        outline-offset: 0;
+      }
+
+      .btn {
+        display: block;
+        width: 100%;
+        margin-top: 2rem;
+        padding: 0.9rem;
+        border: none;
+        border-radius: 999px;
+        background: var(--gold);
+        color: var(--ink);
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .btn:hover:not(:disabled) {
+        background: #d4b872;
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: wait;
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: var(--cream);
+        border: 1px solid rgba(201, 169, 98, 0.5);
+        width: auto;
+        display: inline-block;
+        margin-top: 2rem;
+        padding: 0.65rem 1.5rem;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .error {
+        text-align: center;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 0.5rem;
+        border: 1px solid rgba(127, 29, 29, 0.5);
+        background: rgba(69, 10, 10, 0.35);
+        color: #fecaca;
+        font-size: 0.875rem;
+      }
+
+      .step-styles {
+        animation: fadeUp 0.5s ease-out;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .split {
+        display: grid;
+        gap: 2rem;
+        margin-bottom: 2.5rem;
+      }
+
+      @media (min-width: 768px) {
+        .split {
+          grid-template-columns: 1fr 1.4fr;
+        }
+      }
+
+      .selfie-frame {
+        border-radius: 1rem;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .selfie-frame img {
+        width: 100%;
+        aspect-ratio: 3 / 4;
+        object-fit: cover;
+        display: block;
+      }
+
+      .interpret h2 {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: 1.75rem;
+        font-weight: 500;
+        margin: 0.5rem 0 0;
+        line-height: 1.25;
+      }
+
+      .prompt-box {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 0.75rem;
+        background: rgba(255, 255, 255, 0.05);
+        font-size: 0.875rem;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .styles-title {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: 2rem;
+        margin: 0 0 1.25rem;
+      }
+
+      .styles-grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      @media (min-width: 560px) {
+        .styles-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .style-card {
+        text-align: left;
+        padding: 1.25rem 1.5rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.03);
+        color: inherit;
+        cursor: pointer;
+        transition: border-color 0.2s, background 0.2s;
+      }
+
+      .style-card:hover {
+        border-color: rgba(201, 169, 98, 0.4);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .style-card .mood {
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--gold);
+      }
+
+      .style-card h3 {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: 1.35rem;
+        margin: 0.5rem 0 0.35rem;
+        font-weight: 500;
+      }
+
+      .style-card p {
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+
+      .back-link {
+        background: none;
+        border: none;
+        color: var(--muted);
+        font-size: 0.875rem;
+        cursor: pointer;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        padding: 0;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 5rem 1rem;
+      }
+
+      .spinner {
+        width: 3rem;
+        height: 3rem;
+        margin: 0 auto 1.5rem;
+        border: 2px solid var(--gold);
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading h2 {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-weight: 500;
+        font-size: 1.75rem;
+      }
+
+      /* Gallery */
+      .gallery-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .badge {
+        font-size: 0.65rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        border: 1px solid rgba(201, 169, 98, 0.35);
+        color: var(--gold);
+      }
+
+      .gallery-head h2 {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(2rem, 6vw, 3.5rem);
+        margin: 0.35rem 0 0;
+        font-weight: 500;
+      }
+
+      .gallery-layout {
+        display: grid;
+        gap: 2rem;
+      }
+
+      @media (min-width: 960px) {
+        .wrap--wide {
+          max-width: 1100px;
+        }
+        .gallery-layout {
+          grid-template-columns: 1.2fr 1fr;
+        }
+      }
+
+      .hero-shot {
+        background: rgba(0, 0, 0, 0.35);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+
+      .hero-shot img {
+        width: 100%;
+        max-height: 75vh;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto;
+      }
+
+      .hero-shot figcaption {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: 1.35rem;
+      }
+
+      .thumbs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+
+      .thumbs button {
+        padding: 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.5rem;
+        overflow: hidden;
+        cursor: pointer;
+        background: none;
+        opacity: 0.75;
+        transition: opacity 0.2s, border-color 0.2s;
+      }
+
+      .thumbs button.active {
+        opacity: 1;
+        border-color: var(--gold);
+        box-shadow: 0 0 0 1px var(--gold);
+      }
+
+      .thumbs img {
+        width: 100%;
+        aspect-ratio: 3 / 4;
+        object-fit: cover;
+        display: block;
+      }
+
+      .ref-selfie {
+        margin-top: 2rem;
+        padding: 1.25rem;
+        border-radius: 0.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .ref-selfie img {
+        width: 5rem;
+        border-radius: 0.5rem;
+        margin-top: 0.75rem;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap" id="app">
+      <p class="eyebrow">AI Studio</p>
+      <h1>Нейрофотограф</h1>
+      <p class="lead">
+        Селфи и пара слов о настроении — сервис соберёт промпт, предложит стили и упакует серию кадров в
+        галерею.
+      </p>
+
+      <div id="error" class="error hidden" role="alert"></div>
+
+      <!-- Шаг 1: загрузка -->
+      <section id="step-upload">
+        <form class="panel" id="form-upload">
+          <label class="label" for="file-input">Селфи</label>
+          <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Загрузить селфи">
+            <p id="drop-hint">Нажмите, чтобы загрузить JPG или PNG</p>
+            <img id="preview" class="hidden" alt="Превью селфи" />
+          </div>
+          <input id="file-input" type="file" accept="image/*" class="hidden" />
+
+          <label class="label" for="wish">Ваш запрос</label>
+          <textarea id="wish" name="wish" placeholder="хочу фото как Vogue">хочу фото как Vogue</textarea>
+
+          <button type="submit" class="btn" id="btn-analyze">Продолжить</button>
+        </form>
+      </section>
+
+      <!-- Шаг 2: стили -->
+      <section id="step-styles" class="step-styles hidden">
+        <div class="split">
+          <div class="selfie-frame">
+            <img id="style-selfie" alt="Ваше селфи" />
+          </div>
+          <div class="interpret">
+            <span class="label">Интерпретация</span>
+            <h2 id="interpreted"></h2>
+            <span class="label" style="margin-top: 1.25rem">Master prompt</span>
+            <p class="prompt-box" id="master-prompt"></p>
+            <p style="font-size: 0.75rem; color: var(--muted); margin-top: 0.75rem" id="wish-echo"></p>
+          </div>
+        </div>
+        <h2 class="styles-title">Выберите стиль</h2>
+        <div class="styles-grid" id="styles-grid"></div>
+        <button type="button" class="back-link" id="btn-back">← Загрузить другое фото</button>
+      </section>
+
+      <!-- Шаг 3: генерация -->
+      <section id="step-loading" class="loading hidden">
+        <div class="spinner" aria-hidden="true"></div>
+        <h2>Съёмка в процессе…</h2>
+        <p style="color: var(--muted); font-size: 0.875rem">Сохраняем лицо · рендерим серию · собираем галерею</p>
+      </section>
+
+      <!-- Шаг 4: галерея -->
+      <section id="step-gallery" class="hidden">
+        <div class="gallery-nav">
+          <span class="eyebrow" style="text-align: left; margin: 0">Нейрофотограф</span>
+          <span class="badge">Локальная демо-версия</span>
+        </div>
+        <header class="gallery-head">
+          <p style="font-size: 0.75rem; color: var(--muted); margin: 0" id="gallery-date"></p>
+          <h2 id="gallery-title"></h2>
+          <p style="color: var(--muted); max-width: 36rem; line-height: 1.6" id="gallery-desc"></p>
+        </header>
+        <div class="gallery-layout" style="margin-top: 2.5rem">
+          <figure class="hero-shot">
+            <img id="hero-img" alt="" />
+            <figcaption id="hero-caption"></figcaption>
+          </figure>
+          <aside>
+            <span class="label">Серия</span>
+            <div class="thumbs" id="thumbs"></div>
+            <div class="ref-selfie">
+              <span class="label" style="margin: 0">Исходное селфи</span>
+              <img id="ref-selfie" alt="Селфи" />
+            </div>
+            <button type="button" class="btn btn-ghost" id="btn-new">Новая съёмка</button>
+          </aside>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const STYLES = [
+        {
+          id: "vogue-editorial",
+          title: "Vogue Editorial",
+          description: "Жёсткий свет, haute couture, обложка журнала",
+          mood: "дерзко · роскошно",
+          fragment: "high fashion Vogue editorial, dramatic studio lighting, couture styling",
+        },
+        {
+          id: "soft-glow",
+          title: "Soft Glow",
+          description: "Мягкий свет, пастель, воздушная ретушь",
+          mood: "нежно · мечтательно",
+          fragment: "soft diffused beauty lighting, pastel palette, ethereal glow",
+        },
+        {
+          id: "street-luxe",
+          title: "Street Luxe",
+          description: "Улица + премиум, движение, городской фон",
+          mood: "динамично · современно",
+          fragment: "luxury street fashion, urban backdrop, golden hour cinematic",
+        },
+        {
+          id: "noir-film",
+          title: "Noir Film",
+          description: "Чёрно-белый кадр, контраст, кино 40-х",
+          mood: "драматично · вневременно",
+          fragment: "black and white film noir portrait, high contrast, classic Hollywood",
+        },
+      ];
+
+      const CAPTIONS = ["Обложка", "Портрет", "Полный рост", "Акцент"];
+
+      const state = {
+        selfieDataUrl: null,
+        wish: "",
+        analysis: null,
+        shots: [],
+        activeShot: 0,
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      function showError(msg) {
+        const el = $("error");
+        if (!msg) {
+          el.classList.add("hidden");
+          el.textContent = "";
+          return;
+        }
+        el.textContent = msg;
+        el.classList.remove("hidden");
+      }
+
+      function showStep(name) {
+        ["step-upload", "step-styles", "step-loading", "step-gallery"].forEach((id) => {
+          $(id).classList.toggle("hidden", id !== name);
+        });
+        $("app").classList.toggle("wrap--wide", name === "step-gallery");
+        document.querySelector(".lead").classList.toggle("hidden", name !== "step-upload");
+        document.querySelector("h1").classList.toggle("hidden", name === "step-gallery");
+        document.querySelector(".eyebrow").classList.toggle("hidden", name === "step-gallery");
+      }
+
+      function analyzeWish(wish) {
+        const lower = wish.toLowerCase();
+        const vogue = lower.includes("vogue") || lower.includes("журнал");
+        const styles = vogue
+          ? [STYLES[0], STYLES[2], STYLES[1], STYLES[3]]
+          : [...STYLES];
+        const interpretedWish = vogue
+          ? "Редакционная fashion-съёмка в духе Vogue: сильный свет, уверенная поза, журнальная подача."
+          : "Персональная фотосессия по вашему запросу с акцентом на узнаваемое лицо и цельный визуальный стиль.";
+        const masterPrompt =
+          "Professional AI photoshoot. " +
+          interpretedWish +
+          " Identity-locked face from user selfie. Photorealistic, 8k detail, tasteful retouching.";
+        return { interpretedWish, masterPrompt, styles };
+      }
+
+      function renderStyles(analysis) {
+        $("style-selfie").src = state.selfieDataUrl;
+        $("interpreted").textContent = analysis.interpretedWish;
+        $("master-prompt").textContent = analysis.masterPrompt;
+        $("wish-echo").textContent = 'Запрос: «' + state.wish + '»';
+
+        const grid = $("styles-grid");
+        grid.innerHTML = "";
+        analysis.styles.forEach((style) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "style-card";
+          btn.innerHTML =
+            '<span class="mood">' +
+            style.mood +
+            "</span><h3>" +
+            style.title +
+            "</h3><p>" +
+            style.description +
+            "</p>";
+          btn.addEventListener("click", () => generateGallery(style, analysis));
+          grid.appendChild(btn);
+        });
+      }
+
+      function buildShotUrl(selfieDataUrl, caption, index) {
+        return new Promise((resolve) => {
+          const canvas = document.createElement("canvas");
+          canvas.width = 480;
+          canvas.height = 640;
+          const ctx = canvas.getContext("2d");
+          const gradients = [
+            ["#1a1a1d", "#c9a962"],
+            ["#0f0f12", "#f5f0e8"],
+            ["#2c1810", "#6b6560"],
+            ["#0a0a0b", "#c9a962"],
+          ];
+          const [c1, c2] = gradients[index % 4];
+          const grd = ctx.createLinearGradient(0, 0, 480, 640);
+          grd.addColorStop(0, c1);
+          grd.addColorStop(1, c2);
+          ctx.fillStyle = grd;
+          ctx.fillRect(0, 0, 480, 640);
+
+          const img = new Image();
+          img.onload = () => {
+            ctx.globalAlpha = 0.45;
+            const scale = Math.max(480 / img.width, 640 / img.height);
+            const w = img.width * scale;
+            const h = img.height * scale;
+            ctx.drawImage(img, (480 - w) / 2, (640 - h) / 2, w, h);
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = "rgba(10,10,11,0.35)";
+            ctx.fillRect(0, 0, 480, 640);
+
+            ctx.fillStyle = "#f5f0e8";
+            ctx.font = "600 28px 'Cormorant Garamond', Georgia, serif";
+            ctx.fillText(caption, 40, 560);
+            ctx.fillStyle = "#c9a962";
+            ctx.font = "500 13px 'DM Sans', sans-serif";
+            ctx.fillText("NEURO · кадр " + (index + 1), 40, 592);
+
+            resolve(canvas.toDataURL("image/jpeg", 0.92));
+          };
+          img.onerror = () => resolve(canvas.toDataURL("image/jpeg", 0.92));
+          img.src = selfieDataUrl;
+        });
+      }
+
+      async function generateGallery(style, analysis) {
+        showStep("step-loading");
+        showError(null);
+
+        const shots = [];
+        for (let i = 0; i < CAPTIONS.length; i++) {
+          const url = await buildShotUrl(state.selfieDataUrl, CAPTIONS[i], i);
+          shots.push({
+            caption: CAPTIONS[i],
+            url,
+            prompt:
+              analysis.masterPrompt +
+              " Style: " +
+              style.fragment +
+              ". " +
+              state.wish,
+          });
+          await new Promise((r) => setTimeout(r, 400));
+        }
+
+        state.shots = shots;
+        state.activeShot = 0;
+        state.galleryMeta = { style, analysis };
+
+        renderGallery();
+        showStep("step-gallery");
+      }
+
+      function renderGallery() {
+        const { style, analysis } = state.galleryMeta;
+        $("gallery-date").textContent = new Date().toLocaleDateString("ru-RU", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+        $("gallery-title").textContent = style.title;
+        $("gallery-desc").textContent = analysis.interpretedWish;
+        $("ref-selfie").src = state.selfieDataUrl;
+
+        const thumbs = $("thumbs");
+        thumbs.innerHTML = "";
+        state.shots.forEach((shot, i) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = i === state.activeShot ? "active" : "";
+          const img = document.createElement("img");
+          img.src = shot.url;
+          img.alt = shot.caption;
+          btn.appendChild(img);
+          btn.addEventListener("click", () => {
+            state.activeShot = i;
+            updateHero();
+            thumbs.querySelectorAll("button").forEach((b, j) => b.classList.toggle("active", j === i));
+          });
+          thumbs.appendChild(btn);
+        });
+        updateHero();
+      }
+
+      function updateHero() {
+        const shot = state.shots[state.activeShot];
+        $("hero-img").src = shot.url;
+        $("hero-img").alt = shot.caption;
+        $("hero-caption").textContent = shot.caption;
+      }
+
+      $("dropzone").addEventListener("click", () => $("file-input").click());
+      $("dropzone").addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          $("file-input").click();
+        }
+      });
+
+      $("file-input").addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file || !file.type.startsWith("image/")) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          state.selfieDataUrl = reader.result;
+          const preview = $("preview");
+          preview.src = reader.result;
+          preview.classList.remove("hidden");
+          $("drop-hint").classList.add("hidden");
+        };
+        reader.readAsDataURL(file);
+      });
+
+      $("form-upload").addEventListener("submit", (e) => {
+        e.preventDefault();
+        showError(null);
+        const wish = $("wish").value.trim();
+        if (wish.length < 3) {
+          showError("Опишите желаемый образ (минимум 3 символа)");
+          return;
+        }
+        if (!state.selfieDataUrl) {
+          showError("Выберите селфи");
+          return;
+        }
+        state.wish = wish;
+        state.analysis = analyzeWish(wish);
+        renderStyles(state.analysis);
+        showStep("step-styles");
+      });
+
+      $("btn-back").addEventListener("click", () => showStep("step-upload"));
+      $("btn-new").addEventListener("click", () => {
+        state.selfieDataUrl = null;
+        state.shots = [];
+        $("preview").classList.add("hidden");
+        $("drop-hint").classList.remove("hidden");
+        $("file-input").value = "";
+        showStep("step-upload");
+      });
+    </script>
+  </body>
+</html>
