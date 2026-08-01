@@ -2,6 +2,9 @@
 
 import { useCallback, useState } from "react";
 import type { AnalyzeResult, StyleOption } from "@/types/session";
+import { HeroShowcase } from "@/components/HeroShowcase";
+import { Marquee } from "@/components/Marquee";
+import { MastheadTitle } from "@/components/MastheadTitle";
 import { StylePicker } from "@/components/StylePicker";
 import { UploadForm } from "@/components/UploadForm";
 
@@ -51,43 +54,73 @@ export default function HomePage() {
     [analysis, wish]
   );
 
+  const showMasthead = step === "upload";
+
   return (
-    <main className="mx-auto max-w-5xl px-6 pb-24 pt-16">
-      <header className="mb-16 text-center animate-fade-up">
-        <p className="text-xs uppercase tracking-[0.35em] text-gold">AI Studio</p>
-        <h1 className="mt-4 font-display text-5xl font-medium tracking-tight md:text-7xl">
-          Нейрофотограф
-        </h1>
-        <p className="mx-auto mt-6 max-w-xl text-balance text-muted">
-          Селфи + пара слов о настроении — сервис соберёт промпт, предложит стили и упакует серию кадров в
-          галерею.
-        </p>
-      </header>
+    <>
+      {step !== "generating" && <Marquee />}
 
-      {error && (
-        <p className="mb-8 rounded-lg border border-red-900/50 bg-red-950/30 px-4 py-3 text-center text-sm text-red-200">
-          {error}
-        </p>
-      )}
+      <main className="mx-auto max-w-6xl px-5 pb-24 pt-10 md:px-10">
+        {showMasthead && (
+          <header className="relative mb-14 md:mb-20">
+            <p className="label-editorial reveal">Issue №01 · 2026</p>
+            <div className="mt-6 grid gap-8 md:grid-cols-[1.1fr,0.9fr] md:items-end">
+              <div>
+                <MastheadTitle />
+              </div>
+              <p className="reveal reveal-delay-2 max-w-md text-balance text-sm leading-relaxed text-whisper md:pb-2 md:text-base">
+                Селфи и одна фраза о настроении — сервис соберёт промпт, предложит стили, сохранит лицо и
+                упакует серию в редакционную галерею.
+              </p>
+            </div>
+            <span
+              className="pointer-events-none absolute -right-4 top-0 hidden select-none font-display text-[8rem] font-extralight leading-none text-paper/[0.03] md:block"
+              aria-hidden
+            >
+              AI
+            </span>
+          </header>
+        )}
 
-      {step === "upload" && <UploadForm onSuccess={onAnalyzed} onError={setError} />}
+        {error && (
+          <p className="reveal mb-8 border border-accent/40 bg-accent/10 px-4 py-3 text-center text-sm text-paper">
+            {error}
+          </p>
+        )}
 
-      {step === "styles" && analysis && (
-        <StylePicker
-          analysis={analysis}
-          wish={wish}
-          onBack={() => setStep("upload")}
-          onSelect={onGenerate}
-        />
-      )}
+        {step === "upload" && (
+          <div className="hero-stage">
+            <HeroShowcase />
+            <div className="reveal reveal-delay-3 lg:mt-12">
+              <UploadForm onSuccess={onAnalyzed} onError={setError} />
+            </div>
+          </div>
+        )}
 
-      {step === "generating" && (
-        <div className="flex flex-col items-center gap-6 py-24 animate-fade-up">
-          <div className="h-12 w-12 animate-spin rounded-full border-2 border-gold border-t-transparent" />
-          <p className="font-display text-2xl">Съёмка в процессе…</p>
-          <p className="text-sm text-muted">Сохраняем лицо · рендерим серию · собираем галерею</p>
-        </div>
-      )}
-    </main>
+        {step === "styles" && analysis && (
+          <StylePicker
+            analysis={analysis}
+            wish={wish}
+            onBack={() => setStep("upload")}
+            onSelect={onGenerate}
+          />
+        )}
+
+        {step === "generating" && (
+          <div className="flex min-h-[60vh] flex-col items-center justify-center gap-8 animate-fade-up">
+            <div className="relative h-16 w-16">
+              <span className="absolute inset-0 animate-ping rounded-sm border border-accent/30" />
+              <span className="absolute inset-2 border border-accent" />
+            </div>
+            <div className="text-center">
+              <p className="font-display text-2xl font-light md:text-3xl">Съёмка в процессе</p>
+              <p className="mt-3 text-xs uppercase tracking-[0.25em] text-whisper">
+                Лицо · серия · галерея
+              </p>
+            </div>
+          </div>
+        )}
+      </main>
+    </>
   );
 }

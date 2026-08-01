@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, DM_Sans } from "next/font/google";
+import { Geologica, Unbounded } from "next/font/google";
 import "./globals.css";
 
-const display = Cormorant_Garamond({
+const display = Unbounded({
   subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600"],
+  weight: ["200", "400", "500"],
   variable: "--font-display",
 });
 
-const sans = DM_Sans({
+const sans = Geologica({
   subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600"],
+  weight: ["300", "400", "500"],
   variable: "--font-sans",
 });
 
@@ -22,7 +22,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru" className={`${display.variable} ${sans.variable}`}>
-      <body className="min-h-screen bg-ink text-cream antialiased font-sans">{children}</body>
+      <body className="min-h-screen font-sans">
+        <div className="site-ambient" aria-hidden />
+        <div className="site-grain" aria-hidden />
+        <div className="site-frame">{children}</div>
+      </body>
     </html>
   );
 }

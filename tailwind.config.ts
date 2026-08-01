@@ -5,27 +5,32 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        display: ["var(--font-display)", "Georgia", "serif"],
-        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "serif"],
+        sans: ["var(--font-sans)", "sans-serif"],
       },
       colors: {
-        ink: "#0a0a0b",
-        cream: "#f5f0e8",
-        gold: "#c9a962",
-        muted: "#6b6560",
+        void: "#040404",
+        paper: "#f0e9df",
+        accent: "#ff3d5a",
+        champagne: "#b8956c",
+        whisper: "#7a736a",
+        line: "rgba(240, 233, 223, 0.1)",
+        ink: "#040404",
+        cream: "#f0e9df",
+        gold: "#b8956c",
+        muted: "#7a736a",
       },
       animation: {
         "fade-up": "fadeUp 0.6s ease-out forwards",
-        shimmer: "shimmer 2s linear infinite",
+        marquee: "marquee 28s linear infinite",
       },
       keyframes: {
         fadeUp: {
           "0%": { opacity: "0", transform: "translateY(12px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        shimmer: {
-          "0%": { backgroundPosition: "-200% 0" },
-          "100%": { backgroundPosition: "200% 0" },
+        marquee: {
+          to: { transform: "translateX(-50%)" },
         },
       },
     },

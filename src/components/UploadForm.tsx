@@ -43,14 +43,16 @@ export function UploadForm({ onSuccess, onError }: Props) {
   }
 
   return (
-    <form
-      onSubmit={submit}
-      className="mx-auto max-w-lg space-y-8 rounded-2xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur animate-fade-up"
-    >
+    <form onSubmit={submit} className="panel-editorial space-y-8">
+      <div className="flex items-baseline justify-between border-b border-line pb-4">
+        <span className="label-editorial">Casting call</span>
+        <span className="text-[0.65rem] text-whisper">Step 01</span>
+      </div>
+
       <label className="block">
-        <span className="text-xs uppercase tracking-widest text-gold">Селфи</span>
+        <span className="label-editorial">Селфи</span>
         <div
-          className="mt-3 flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-white/20 bg-ink/50 py-12 transition hover:border-gold/50"
+          className="group mt-4 flex min-h-[11rem] cursor-pointer flex-col items-center justify-center border border-dashed border-line bg-void transition hover:border-accent/60"
           onClick={() => fileRef.current?.click()}
           onKeyDown={(e) => e.key === "Enter" && fileRef.current?.click()}
           role="button"
@@ -58,9 +60,11 @@ export function UploadForm({ onSuccess, onError }: Props) {
         >
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={preview} alt="Превью" className="max-h-48 rounded-lg object-cover" />
+            <img src={preview} alt="Превью" className="max-h-52 w-full object-cover" />
           ) : (
-            <p className="text-sm text-muted">Нажмите, чтобы загрузить JPG или PNG</p>
+            <p className="px-4 text-center text-sm text-whisper transition group-hover:text-paper">
+              Перетащите или нажмите · JPG / PNG
+            </p>
           )}
         </div>
         <input
@@ -76,22 +80,18 @@ export function UploadForm({ onSuccess, onError }: Props) {
       </label>
 
       <label className="block">
-        <span className="text-xs uppercase tracking-widest text-gold">Ваш запрос</span>
+        <span className="label-editorial">Ваш запрос</span>
         <textarea
           value={wish}
           onChange={(e) => setWish(e.target.value)}
           rows={3}
-          className="mt-3 w-full resize-none rounded-xl border border-white/10 bg-ink/80 px-4 py-3 text-cream outline-none ring-gold/30 focus:ring-2"
+          className="mt-4 w-full resize-none border border-line bg-transparent px-4 py-3 text-paper outline-none transition focus:border-accent"
           placeholder="хочу фото как Vogue"
         />
       </label>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-full bg-gold py-3.5 text-sm font-semibold uppercase tracking-wider text-ink transition hover:bg-[#d4b872] disabled:opacity-50"
-      >
-        {loading ? "Составляем промпт…" : "Продолжить"}
+      <button type="submit" disabled={loading} className="btn-accent disabled:opacity-40">
+        {loading ? "Составляем промпт…" : "К creative direction →"}
       </button>
     </form>
   );

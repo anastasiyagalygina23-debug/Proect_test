@@ -11,15 +11,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Geologica:wght@300;400;500&family=Unbounded:wght@200;400;500&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --ink: #0a0a0b;
-        --cream: #f5f0e8;
-        --gold: #c9a962;
-        --muted: #6b6560;
+        --void: #040404;
+        --paper: #f0e9df;
+        --accent: #ff3d5a;
+        --champagne: #b8956c;
+        --whisper: #7a736a;
+        --line: rgba(240, 233, 223, 0.1);
       }
 
       *,
@@ -31,63 +33,304 @@
       body {
         margin: 0;
         min-height: 100vh;
-        font-family: "DM Sans", system-ui, sans-serif;
-        background: var(--ink);
-        color: var(--cream);
-        background-image: radial-gradient(
-          ellipse 80% 50% at 50% -20%,
-          rgba(201, 169, 98, 0.12),
-          transparent
-        );
+        font-family: "Geologica", sans-serif;
+        font-weight: 300;
+        background: var(--void);
+        color: var(--paper);
+        background-image:
+          radial-gradient(ellipse 90% 60% at 100% 0%, rgba(255, 61, 90, 0.07), transparent 55%),
+          radial-gradient(ellipse 70% 50% at 0% 100%, rgba(184, 149, 108, 0.08), transparent 50%);
       }
 
-      .wrap {
-        max-width: 960px;
-        margin: 0 auto;
-        padding: 4rem 1.5rem 6rem;
+      .ambient {
+        pointer-events: none;
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+          linear-gradient(105deg, transparent 48%, rgba(255, 61, 90, 0.03) 49%, transparent 51%),
+          linear-gradient(-12deg, transparent 62%, rgba(240, 233, 223, 0.02) 63%, transparent 65%);
       }
 
-      .eyebrow {
-        text-align: center;
+      .grain {
+        pointer-events: none;
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        opacity: 0.35;
+        mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+      }
+
+      .marquee-wrap {
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        padding: 0.65rem 0;
+      }
+
+      .marquee-track {
+        display: flex;
+        width: max-content;
+        animation: marquee 28s linear infinite;
+      }
+
+      .marquee-track span {
+        padding: 0 1rem;
         font-size: 0.65rem;
         letter-spacing: 0.35em;
         text-transform: uppercase;
-        color: var(--gold);
+        color: var(--whisper);
+        white-space: nowrap;
       }
 
-      h1 {
-        font-family: "Cormorant Garamond", Georgia, serif;
-        font-weight: 500;
-        font-size: clamp(2.5rem, 8vw, 4.5rem);
-        text-align: center;
-        margin: 1rem 0 0;
-        line-height: 1.05;
+      @keyframes marquee {
+        to {
+          transform: translateX(-50%);
+        }
       }
 
-      .lead {
-        text-align: center;
-        max-width: 32rem;
-        margin: 1.5rem auto 3rem;
-        color: var(--muted);
-        line-height: 1.6;
-      }
-
-      .panel {
-        max-width: 28rem;
+      .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: 72rem;
         margin: 0 auto;
-        padding: 2rem;
-        border-radius: 1rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(255, 255, 255, 0.03);
+        padding: 2.5rem 1.25rem 5rem;
+      }
+
+      .wrap--wide {
+        max-width: 80rem;
       }
 
       .label {
-        display: block;
-        font-size: 0.65rem;
-        letter-spacing: 0.2em;
+        font-size: 0.62rem;
+        font-weight: 500;
+        letter-spacing: 0.28em;
         text-transform: uppercase;
-        color: var(--gold);
-        margin-bottom: 0.75rem;
+        color: var(--champagne);
+      }
+
+      .masthead {
+        position: relative;
+        margin-bottom: 3.5rem;
+      }
+
+      .masthead-grid {
+        display: grid;
+        gap: 2rem;
+        margin-top: 1.5rem;
+      }
+
+      @media (min-width: 768px) {
+        .masthead-grid {
+          grid-template-columns: 1.1fr 0.9fr;
+          align-items: end;
+        }
+        .masthead {
+          margin-bottom: 5rem;
+        }
+      }
+
+      h1 {
+        font-family: "Unbounded", sans-serif;
+        font-weight: 200;
+        font-size: clamp(2.75rem, 11vw, 5.5rem);
+        line-height: 0.95;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+
+      .masthead-type {
+        display: inline-block;
+        min-height: 1.05em;
+      }
+
+      #type-cursor {
+        margin-left: 0.08em;
+        color: var(--champagne);
+        font-weight: 300;
+      }
+
+      h1 .accent {
+        display: block;
+        font-weight: 400;
+        color: var(--accent);
+      }
+
+      .watermark {
+        pointer-events: none;
+        position: absolute;
+        right: -1rem;
+        top: 0;
+        font-family: "Unbounded", sans-serif;
+        font-size: 8rem;
+        font-weight: 200;
+        line-height: 1;
+        color: rgba(240, 233, 223, 0.03);
+        display: none;
+      }
+
+      @media (min-width: 768px) {
+        .watermark {
+          display: block;
+        }
+      }
+
+      .lead {
+        margin: 0;
+        max-width: 22rem;
+        font-size: 0.95rem;
+        line-height: 1.65;
+        color: var(--whisper);
+      }
+
+  .panel-wrap {
+    max-width: 28rem;
+    margin-left: auto;
+  }
+
+  .hero-stage {
+    display: grid;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  @media (min-width: 960px) {
+    .hero-stage {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 3rem;
+      margin-top: -1rem;
+    }
+    .panel-wrap {
+      margin-left: 0;
+      max-width: none;
+      margin-top: 3rem;
+    }
+  }
+
+  .hero-showcase {
+    position: relative;
+    max-width: 26rem;
+  }
+
+  @media (min-width: 960px) {
+    .hero-showcase {
+      max-width: none;
+      margin-left: -0.5rem;
+    }
+  }
+
+  .hero-showcase__tag {
+    position: absolute;
+    top: 1.5rem;
+    left: -0.75rem;
+    z-index: 2;
+    padding: 0.4rem 0.75rem;
+    background: var(--void);
+    border: 1px solid var(--line);
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--champagne);
+  }
+
+  .hero-showcase__frame {
+    position: relative;
+    border: 1px solid var(--line);
+    box-shadow: 12px 12px 0 rgba(255, 61, 90, 0.18);
+    overflow: hidden;
+  }
+
+  .hero-showcase__frame img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    max-height: min(72vh, 640px);
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .hero-showcase__fade {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(4, 4, 4, 0.92) 0%, transparent 45%, rgba(4, 4, 4, 0.15) 100%);
+  }
+
+  .hero-showcase__caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    padding: 1.25rem 1.35rem;
+  }
+
+  .hero-showcase__caption p {
+    margin: 0;
+    max-width: 11rem;
+    font-size: 0.72rem;
+    line-height: 1.45;
+    color: var(--whisper);
+  }
+
+  .hero-showcase__stamp {
+    position: absolute;
+    right: -0.5rem;
+    bottom: -0.75rem;
+    z-index: 2;
+    padding: 0.45rem 0.85rem;
+    background: var(--accent);
+    color: var(--void);
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .hero-showcase__line {
+    position: absolute;
+    top: 12%;
+    right: -1.25rem;
+    width: 1px;
+    height: 38%;
+    background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+    opacity: 0.65;
+    display: none;
+  }
+
+  @media (min-width: 960px) {
+    .hero-showcase__line {
+      display: block;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .panel-wrap {
+      margin-top: -1rem;
+    }
+  }
+
+      .panel {
+        padding: 2rem;
+        border: 1px solid var(--line);
+        background: rgba(4, 4, 4, 0.85);
+        box-shadow: 8px 8px 0 rgba(255, 61, 90, 0.15);
+        backdrop-filter: blur(6px);
+      }
+
+      .panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--line);
       }
 
       .dropzone {
@@ -96,82 +339,91 @@
         align-items: center;
         justify-content: center;
         min-height: 11rem;
-        border-radius: 0.75rem;
-        border: 1px dashed rgba(255, 255, 255, 0.2);
-        background: rgba(10, 10, 11, 0.5);
+        margin-top: 1rem;
+        border: 1px dashed var(--line);
+        background: var(--void);
         cursor: pointer;
-        overflow: hidden;
-        transition: border-color 0.2s;
+        transition: border-color 0.25s;
       }
 
       .dropzone:hover {
-        border-color: rgba(201, 169, 98, 0.5);
+        border-color: rgba(255, 61, 90, 0.55);
       }
 
       .dropzone img {
-        max-height: 12rem;
+        max-height: 13rem;
         width: 100%;
         object-fit: cover;
       }
 
       .dropzone p {
         margin: 0;
+        padding: 0 1rem;
+        text-align: center;
         font-size: 0.875rem;
-        color: var(--muted);
+        color: var(--whisper);
       }
 
       textarea {
         width: 100%;
-        margin-top: 0.75rem;
+        margin-top: 1rem;
         padding: 0.875rem 1rem;
-        border-radius: 0.75rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(10, 10, 11, 0.8);
-        color: var(--cream);
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--paper);
         font: inherit;
         resize: vertical;
         min-height: 5rem;
+        transition: border-color 0.2s;
       }
 
       textarea:focus {
-        outline: 2px solid rgba(201, 169, 98, 0.35);
-        outline-offset: 0;
+        outline: none;
+        border-color: var(--accent);
       }
 
       .btn {
+        position: relative;
         display: block;
         width: 100%;
         margin-top: 2rem;
         padding: 0.9rem;
-        border: none;
-        border-radius: 999px;
-        background: var(--gold);
-        color: var(--ink);
-        font-size: 0.75rem;
+        overflow: hidden;
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: var(--void);
+        font-family: inherit;
+        font-size: 0.68rem;
         font-weight: 600;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.22em;
         text-transform: uppercase;
         cursor: pointer;
-        transition: background 0.2s;
+        transition: color 0.25s, background 0.25s;
       }
 
       .btn:hover:not(:disabled) {
-        background: #d4b872;
+        background: transparent;
+        color: var(--accent);
       }
 
       .btn:disabled {
-        opacity: 0.5;
+        opacity: 0.4;
         cursor: wait;
       }
 
       .btn-ghost {
-        background: transparent;
-        color: var(--cream);
-        border: 1px solid rgba(201, 169, 98, 0.5);
         width: auto;
         display: inline-block;
         margin-top: 2rem;
-        padding: 0.65rem 1.5rem;
+        background: transparent;
+        color: var(--paper);
+        border-color: rgba(240, 233, 223, 0.25);
+      }
+
+      .btn-ghost:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: transparent;
       }
 
       .hidden {
@@ -179,24 +431,33 @@
       }
 
       .error {
-        text-align: center;
-        padding: 0.75rem 1rem;
         margin-bottom: 1.5rem;
-        border-radius: 0.5rem;
-        border: 1px solid rgba(127, 29, 29, 0.5);
-        background: rgba(69, 10, 10, 0.35);
-        color: #fecaca;
+        padding: 0.75rem 1rem;
+        border: 1px solid rgba(255, 61, 90, 0.45);
+        background: rgba(255, 61, 90, 0.1);
         font-size: 0.875rem;
+        text-align: center;
       }
 
-      .step-styles {
-        animation: fadeUp 0.5s ease-out;
+      .reveal {
+        animation: reveal 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        opacity: 0;
       }
 
-      @keyframes fadeUp {
+      .reveal-d1 {
+        animation-delay: 0.12s;
+      }
+      .reveal-d2 {
+        animation-delay: 0.24s;
+      }
+      .reveal-d3 {
+        animation-delay: 0.36s;
+      }
+
+      @keyframes reveal {
         from {
           opacity: 0;
-          transform: translateY(12px);
+          transform: translateY(20px);
         }
         to {
           opacity: 1;
@@ -206,20 +467,27 @@
 
       .split {
         display: grid;
-        gap: 2rem;
-        margin-bottom: 2.5rem;
+        gap: 2.5rem;
+        margin-bottom: 3rem;
       }
 
-      @media (min-width: 768px) {
+      @media (min-width: 960px) {
         .split {
-          grid-template-columns: 1fr 1.4fr;
+          grid-template-columns: 0.85fr 1.15fr;
+          gap: 4rem;
         }
       }
 
       .selfie-frame {
-        border-radius: 1rem;
+        position: relative;
+        border: 1px solid var(--line);
         overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      @media (min-width: 960px) {
+        .selfie-frame {
+          margin-top: -2rem;
+        }
       }
 
       .selfie-frame img {
@@ -229,28 +497,61 @@
         display: block;
       }
 
+      .ref-tag {
+        position: absolute;
+        bottom: -0.75rem;
+        right: -0.75rem;
+        padding: 0.35rem 0.75rem;
+        background: var(--accent);
+        color: var(--void);
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      .interpret {
+        padding-top: 0;
+      }
+
+      @media (min-width: 960px) {
+        .interpret {
+          padding-top: 3rem;
+        }
+      }
+
       .interpret h2 {
-        font-family: "Cormorant Garamond", Georgia, serif;
-        font-size: 1.75rem;
-        font-weight: 500;
-        margin: 0.5rem 0 0;
-        line-height: 1.25;
+        font-family: "Unbounded", sans-serif;
+        font-weight: 300;
+        font-size: clamp(1.35rem, 3vw, 1.85rem);
+        line-height: 1.35;
+        margin: 0.75rem 0 0;
       }
 
       .prompt-box {
-        margin-top: 1rem;
-        padding: 1rem;
-        border-radius: 0.75rem;
-        background: rgba(255, 255, 255, 0.05);
+        margin-top: 1.25rem;
+        padding-left: 1.25rem;
+        border-left: 2px solid rgba(255, 61, 90, 0.8);
         font-size: 0.875rem;
-        color: var(--muted);
-        line-height: 1.5;
+        color: var(--whisper);
+        line-height: 1.6;
+      }
+
+      .styles-head {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 1rem;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--line);
       }
 
       .styles-title {
-        font-family: "Cormorant Garamond", Georgia, serif;
-        font-size: 2rem;
-        margin: 0 0 1.25rem;
+        font-family: "Unbounded", sans-serif;
+        font-weight: 300;
+        font-size: clamp(1.75rem, 4vw, 2.5rem);
+        margin: 0;
       }
 
       .styles-grid {
@@ -265,80 +566,113 @@
       }
 
       .style-card {
+        position: relative;
         text-align: left;
-        padding: 1.25rem 1.5rem;
-        border-radius: 1rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(255, 255, 255, 0.03);
+        padding: 1.5rem;
+        border: 1px solid var(--line);
+        background: rgba(4, 4, 4, 0.65);
         color: inherit;
         cursor: pointer;
-        transition: border-color 0.2s, background 0.2s;
+        transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
       }
 
       .style-card:hover {
-        border-color: rgba(201, 169, 98, 0.4);
-        background: rgba(255, 255, 255, 0.06);
+        transform: translateY(-4px);
+        border-color: rgba(255, 61, 90, 0.5);
+        box-shadow: 6px 6px 0 rgba(255, 61, 90, 0.12);
+      }
+
+      .style-card .num {
+        font-family: "Unbounded", sans-serif;
+        font-size: 2rem;
+        font-weight: 200;
+        color: rgba(240, 233, 223, 0.12);
       }
 
       .style-card .mood {
-        font-size: 0.65rem;
-        letter-spacing: 0.15em;
+        display: block;
+        margin-top: 1rem;
+        font-size: 0.62rem;
+        letter-spacing: 0.28em;
         text-transform: uppercase;
-        color: var(--gold);
+        color: var(--champagne);
       }
 
       .style-card h3 {
-        font-family: "Cormorant Garamond", Georgia, serif;
-        font-size: 1.35rem;
+        font-family: "Unbounded", sans-serif;
+        font-size: 1.15rem;
+        font-weight: 400;
         margin: 0.5rem 0 0.35rem;
-        font-weight: 500;
+      }
+
+      .style-card:hover h3 {
+        color: var(--accent);
       }
 
       .style-card p {
         margin: 0;
         font-size: 0.875rem;
-        color: var(--muted);
+        color: var(--whisper);
       }
 
       .back-link {
         background: none;
         border: none;
-        color: var(--muted);
+        color: var(--whisper);
         font-size: 0.875rem;
         cursor: pointer;
-        text-decoration: underline;
-        text-underline-offset: 4px;
         padding: 0;
       }
 
+      .back-link:hover {
+        color: var(--accent);
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+
       .loading {
-        text-align: center;
-        padding: 5rem 1rem;
+        display: flex;
+        min-height: 60vh;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
       }
 
-      .spinner {
-        width: 3rem;
-        height: 3rem;
-        margin: 0 auto 1.5rem;
-        border: 2px solid var(--gold);
-        border-top-color: transparent;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
+      .loader-box {
+        position: relative;
+        width: 4rem;
+        height: 4rem;
       }
 
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
+      .loader-ping {
+        position: absolute;
+        inset: 0;
+        border: 1px solid rgba(255, 61, 90, 0.35);
+        animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+      }
+
+      .loader-inner {
+        position: absolute;
+        inset: 0.5rem;
+        border: 1px solid var(--accent);
+      }
+
+      @keyframes ping {
+        75%,
+        100% {
+          transform: scale(1.4);
+          opacity: 0;
         }
       }
 
       .loading h2 {
-        font-family: "Cormorant Garamond", Georgia, serif;
-        font-weight: 500;
+        font-family: "Unbounded", sans-serif;
+        font-weight: 300;
         font-size: 1.75rem;
+        margin: 0;
       }
 
-      /* Gallery */
       .gallery-nav {
         display: flex;
         justify-content: space-between;
@@ -347,76 +681,110 @@
       }
 
       .badge {
-        font-size: 0.65rem;
+        font-size: 0.62rem;
         padding: 0.35rem 0.75rem;
-        border-radius: 999px;
-        border: 1px solid rgba(201, 169, 98, 0.35);
-        color: var(--gold);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        border: 1px solid rgba(184, 149, 108, 0.45);
+        color: var(--champagne);
+      }
+
+      .gallery-head {
+        position: relative;
       }
 
       .gallery-head h2 {
-        font-family: "Cormorant Garamond", Georgia, serif;
-        font-size: clamp(2rem, 6vw, 3.5rem);
-        margin: 0.35rem 0 0;
-        font-weight: 500;
+        font-family: "Unbounded", sans-serif;
+        font-weight: 300;
+        font-size: clamp(2.25rem, 8vw, 4rem);
+        line-height: 1;
+        margin: 0.75rem 0 0;
+      }
+
+      .frame-num {
+        pointer-events: none;
+        position: absolute;
+        right: 0;
+        top: 0;
+        font-family: "Unbounded", sans-serif;
+        font-size: 6rem;
+        font-weight: 200;
+        color: rgba(240, 233, 223, 0.04);
+        display: none;
+      }
+
+      @media (min-width: 768px) {
+        .frame-num {
+          display: block;
+        }
       }
 
       .gallery-layout {
         display: grid;
-        gap: 2rem;
+        gap: 2.5rem;
+        margin-top: 3rem;
       }
 
       @media (min-width: 960px) {
-        .wrap--wide {
-          max-width: 1100px;
-        }
         .gallery-layout {
-          grid-template-columns: 1.2fr 1fr;
+          grid-template-columns: 1.25fr 0.75fr;
+          gap: 3rem;
         }
       }
 
       .hero-shot {
-        background: rgba(0, 0, 0, 0.35);
-        border-radius: 2px;
+        border: 1px solid var(--line);
+        background: var(--void);
         overflow: hidden;
       }
 
       .hero-shot img {
         width: 100%;
-        max-height: 75vh;
+        max-height: 78vh;
         object-fit: contain;
         display: block;
         margin: 0 auto;
       }
 
       .hero-shot figcaption {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
         padding: 1rem 1.5rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        font-family: "Cormorant Garamond", Georgia, serif;
-        font-size: 1.35rem;
+        border-top: 1px solid var(--line);
+        font-family: "Unbounded", sans-serif;
+        font-size: 1.15rem;
+      }
+
+      .hero-shot figcaption span:last-child {
+        font-family: "Geologica", sans-serif;
+        font-size: 0.65rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--whisper);
       }
 
       .thumbs {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 0.75rem;
+        gap: 0.5rem;
+        margin-top: 1rem;
       }
 
       .thumbs button {
         padding: 0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 0.5rem;
+        border: 1px solid var(--line);
         overflow: hidden;
         cursor: pointer;
         background: none;
-        opacity: 0.75;
+        opacity: 0.6;
         transition: opacity 0.2s, border-color 0.2s;
       }
 
       .thumbs button.active {
         opacity: 1;
-        border-color: var(--gold);
-        box-shadow: 0 0 0 1px var(--gold);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent);
       }
 
       .thumbs img {
@@ -427,95 +795,163 @@
       }
 
       .ref-selfie {
-        margin-top: 2rem;
+        margin-top: 2.5rem;
         padding: 1.25rem;
-        border-radius: 0.75rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--line);
       }
 
       .ref-selfie img {
         width: 5rem;
-        border-radius: 0.5rem;
-        margin-top: 0.75rem;
+        margin-top: 1rem;
+        border: 1px solid var(--line);
         display: block;
+        object-fit: cover;
+      }
+
+      .aside-block {
+        padding-top: 0;
+      }
+
+      @media (min-width: 960px) {
+        .aside-block {
+          padding-top: 2rem;
+        }
       }
     </style>
   </head>
   <body>
+    <div class="ambient" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <div class="marquee-wrap" id="marquee-wrap">
+      <div class="marquee-track">
+        <span>NEURO FOTOGRAF · EDITORIAL AI · IDENTITY LOCK · VOGUE ENERGY · PROMPT STUDIO · SERIES EXPORT · </span>
+        <span>NEURO FOTOGRAF · EDITORIAL AI · IDENTITY LOCK · VOGUE ENERGY · PROMPT STUDIO · SERIES EXPORT · </span>
+      </div>
+    </div>
+
     <div class="wrap" id="app">
-      <p class="eyebrow">AI Studio</p>
-      <h1>Нейрофотограф</h1>
-      <p class="lead">
-        Селфи и пара слов о настроении — сервис соберёт промпт, предложит стили и упакует серию кадров в
-        галерею.
-      </p>
+      <header class="masthead reveal" id="masthead">
+        <p class="label">Issue №01 · 2026</p>
+        <div class="masthead-grid">
+          <div>
+            <h1>
+              Нейро<span class="accent masthead-type" id="masthead-type"><span id="type-content"></span><span id="type-cursor" aria-hidden="true">_</span></span>
+            </h1>
+          </div>
+          <p class="lead" id="lead">
+            Селфи и одна фраза о настроении — сервис соберёт промпт, предложит стили, сохранит лицо и упакует
+            серию в редакционную галерею.
+          </p>
+        </div>
+        <span class="watermark" aria-hidden="true">AI</span>
+      </header>
 
       <div id="error" class="error hidden" role="alert"></div>
 
-      <!-- Шаг 1: загрузка -->
       <section id="step-upload">
-        <form class="panel" id="form-upload">
-          <label class="label" for="file-input">Селфи</label>
-          <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Загрузить селфи">
-            <p id="drop-hint">Нажмите, чтобы загрузить JPG или PNG</p>
-            <img id="preview" class="hidden" alt="Превью селфи" />
-          </div>
-          <input id="file-input" type="file" accept="image/*" class="hidden" />
+        <div class="hero-stage">
+          <figure class="hero-showcase reveal reveal-d2" id="hero-showcase">
+            <span class="hero-showcase__tag">Cover story</span>
+            <div class="hero-showcase__frame">
+              <img src="public/hero-showcase.png" alt="Пример ночной editorial-съёмки" width="960" height="1280" />
+              <div class="hero-showcase__fade" aria-hidden="true"></div>
+              <figcaption class="hero-showcase__caption">
+                <div>
+                  <span class="label">Showcase</span>
+                  <p>Night editorial · sequins · city lights · identity preserved</p>
+                </div>
+                <span class="label" style="color: var(--paper)">№01</span>
+              </figcaption>
+            </div>
+            <span class="hero-showcase__stamp">AI sample</span>
+            <span class="hero-showcase__line" aria-hidden="true"></span>
+          </figure>
 
-          <label class="label" for="wish">Ваш запрос</label>
-          <textarea id="wish" name="wish" placeholder="хочу фото как Vogue">хочу фото как Vogue</textarea>
+          <div class="panel-wrap reveal reveal-d3">
+          <form class="panel" id="form-upload">
+            <div class="panel-head">
+              <span class="label">Casting call</span>
+              <span style="font-size: 0.65rem; color: var(--whisper)">Step 01</span>
+            </div>
 
-          <button type="submit" class="btn" id="btn-analyze">Продолжить</button>
-        </form>
+            <label class="label" for="file-input">Селфи</label>
+            <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Загрузить селфи">
+              <p id="drop-hint">Перетащите или нажмите · JPG / PNG</p>
+              <img id="preview" class="hidden" alt="Превью селфи" />
+            </div>
+            <input id="file-input" type="file" accept="image/*" class="hidden" />
+
+            <label class="label" for="wish" style="display: block; margin-top: 2rem">Ваш запрос</label>
+            <textarea id="wish" name="wish" placeholder="хочу фото как Vogue">хочу фото как Vogue</textarea>
+
+            <button type="submit" class="btn" id="btn-analyze">К creative direction →</button>
+          </form>
+        </div>
+        </div>
       </section>
 
-      <!-- Шаг 2: стили -->
-      <section id="step-styles" class="step-styles hidden">
+      <section id="step-styles" class="hidden">
         <div class="split">
           <div class="selfie-frame">
             <img id="style-selfie" alt="Ваше селфи" />
+            <span class="ref-tag">Ref</span>
           </div>
           <div class="interpret">
-            <span class="label">Интерпретация</span>
+            <span class="label">Creative brief</span>
             <h2 id="interpreted"></h2>
-            <span class="label" style="margin-top: 1.25rem">Master prompt</span>
-            <p class="prompt-box" id="master-prompt"></p>
-            <p style="font-size: 0.75rem; color: var(--muted); margin-top: 0.75rem" id="wish-echo"></p>
+            <div class="prompt-box">
+              <span class="label">Master prompt</span>
+              <p id="master-prompt" style="margin: 0.5rem 0 0"></p>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--whisper); margin-top: 1rem" id="wish-echo"></p>
           </div>
         </div>
-        <h2 class="styles-title">Выберите стиль</h2>
+        <div class="styles-head">
+          <h2 class="styles-title">Выберите стиль</h2>
+          <span class="label">Step 02</span>
+        </div>
         <div class="styles-grid" id="styles-grid"></div>
-        <button type="button" class="back-link" id="btn-back">← Загрузить другое фото</button>
+        <button type="button" class="back-link" id="btn-back">← Другое селфи</button>
       </section>
 
-      <!-- Шаг 3: генерация -->
       <section id="step-loading" class="loading hidden">
-        <div class="spinner" aria-hidden="true"></div>
-        <h2>Съёмка в процессе…</h2>
-        <p style="color: var(--muted); font-size: 0.875rem">Сохраняем лицо · рендерим серию · собираем галерею</p>
+        <div class="loader-box" aria-hidden="true">
+          <div class="loader-ping"></div>
+          <div class="loader-inner"></div>
+        </div>
+        <div style="text-align: center">
+          <h2>Съёмка в процессе</h2>
+          <p style="color: var(--whisper); font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase">
+            Лицо · серия · галерея
+          </p>
+        </div>
       </section>
 
-      <!-- Шаг 4: галерея -->
       <section id="step-gallery" class="hidden">
         <div class="gallery-nav">
-          <span class="eyebrow" style="text-align: left; margin: 0">Нейрофотограф</span>
-          <span class="badge">Локальная демо-версия</span>
+          <span class="label">Нейрофотограф</span>
+          <span class="badge">Локальная demo</span>
         </div>
         <header class="gallery-head">
-          <p style="font-size: 0.75rem; color: var(--muted); margin: 0" id="gallery-date"></p>
+          <p class="label" style="margin: 0" id="gallery-date"></p>
           <h2 id="gallery-title"></h2>
-          <p style="color: var(--muted); max-width: 36rem; line-height: 1.6" id="gallery-desc"></p>
+          <p style="color: var(--whisper); max-width: 36rem; line-height: 1.6; margin-top: 1.5rem" id="gallery-desc"></p>
+          <span class="frame-num" id="frame-num" aria-hidden="true">01</span>
         </header>
-        <div class="gallery-layout" style="margin-top: 2.5rem">
+        <div class="gallery-layout">
           <figure class="hero-shot">
             <img id="hero-img" alt="" />
-            <figcaption id="hero-caption"></figcaption>
+            <figcaption>
+              <span id="hero-caption"></span>
+              <span>Frame</span>
+            </figcaption>
           </figure>
-          <aside>
-            <span class="label">Серия</span>
+          <aside class="aside-block">
+            <span class="label">Contact sheet</span>
             <div class="thumbs" id="thumbs"></div>
             <div class="ref-selfie">
-              <span class="label" style="margin: 0">Исходное селфи</span>
+              <span class="label" style="margin: 0">Reference</span>
               <img id="ref-selfie" alt="Селфи" />
             </div>
             <button type="button" class="btn btn-ghost" id="btn-new">Новая съёмка</button>
@@ -524,6 +960,58 @@
       </section>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+    <script>
+      (function initMastheadType() {
+        const lines = ["фотограф", "как Vogue", "с вашим лицом", "editorial AI", "серия кадров"];
+        const el = document.getElementById("type-content");
+        const cursor = document.getElementById("type-cursor");
+        if (!el || !cursor || typeof gsap === "undefined") return;
+
+        gsap.to(cursor, {
+          opacity: 0,
+          duration: 0.5,
+          repeat: -1,
+          yoyo: true,
+          ease: "power2.inOut",
+        });
+
+        let lineIndex = 0;
+        let charIndex = 0;
+        let deleting = false;
+        let text = "";
+
+        function tick() {
+          const full = lines[lineIndex];
+          if (!deleting) {
+            text = full.slice(0, charIndex + 1);
+            charIndex += 1;
+            el.textContent = text;
+            if (charIndex >= full.length) {
+              setTimeout(() => {
+                deleting = true;
+                tick();
+              }, 1500);
+              return;
+            }
+            setTimeout(tick, 75);
+          } else {
+            text = full.slice(0, charIndex - 1);
+            charIndex -= 1;
+            el.textContent = text;
+            if (charIndex <= 0) {
+              deleting = false;
+              lineIndex = (lineIndex + 1) % lines.length;
+              setTimeout(tick, 400);
+              return;
+            }
+            setTimeout(tick, 50);
+          }
+        }
+
+        setTimeout(tick, 400);
+      })();
+    </script>
     <script>
       const STYLES = [
         {
@@ -584,17 +1072,15 @@
           $(id).classList.toggle("hidden", id !== name);
         });
         $("app").classList.toggle("wrap--wide", name === "step-gallery");
-        document.querySelector(".lead").classList.toggle("hidden", name !== "step-upload");
-        document.querySelector("h1").classList.toggle("hidden", name === "step-gallery");
-        document.querySelector(".eyebrow").classList.toggle("hidden", name === "step-gallery");
+        $("masthead").classList.toggle("hidden", name !== "step-upload");
+        $("lead").classList.toggle("hidden", name !== "step-upload");
+        $("marquee-wrap").classList.toggle("hidden", name === "step-loading");
       }
 
       function analyzeWish(wish) {
         const lower = wish.toLowerCase();
         const vogue = lower.includes("vogue") || lower.includes("журнал");
-        const styles = vogue
-          ? [STYLES[0], STYLES[2], STYLES[1], STYLES[3]]
-          : [...STYLES];
+        const styles = vogue ? [STYLES[0], STYLES[2], STYLES[1], STYLES[3]] : [...STYLES];
         const interpretedWish = vogue
           ? "Редакционная fashion-съёмка в духе Vogue: сильный свет, уверенная поза, журнальная подача."
           : "Персональная фотосессия по вашему запросу с акцентом на узнаваемое лицо и цельный визуальный стиль.";
@@ -613,12 +1099,14 @@
 
         const grid = $("styles-grid");
         grid.innerHTML = "";
-        analysis.styles.forEach((style) => {
+        analysis.styles.forEach((style, i) => {
           const btn = document.createElement("button");
           btn.type = "button";
           btn.className = "style-card";
           btn.innerHTML =
-            '<span class="mood">' +
+            '<span class="num">' +
+            String(i + 1).padStart(2, "0") +
+            '</span><span class="mood">' +
             style.mood +
             "</span><h3>" +
             style.title +
@@ -637,10 +1125,10 @@
           canvas.height = 640;
           const ctx = canvas.getContext("2d");
           const gradients = [
-            ["#1a1a1d", "#c9a962"],
-            ["#0f0f12", "#f5f0e8"],
-            ["#2c1810", "#6b6560"],
-            ["#0a0a0b", "#c9a962"],
+            ["#120608", "#ff3d5a"],
+            ["#0a0a0b", "#f0e9df"],
+            ["#1a1210", "#b8956c"],
+            ["#040404", "#ff3d5a"],
           ];
           const [c1, c2] = gradients[index % 4];
           const grd = ctx.createLinearGradient(0, 0, 480, 640);
@@ -651,21 +1139,21 @@
 
           const img = new Image();
           img.onload = () => {
-            ctx.globalAlpha = 0.45;
+            ctx.globalAlpha = 0.42;
             const scale = Math.max(480 / img.width, 640 / img.height);
             const w = img.width * scale;
             const h = img.height * scale;
             ctx.drawImage(img, (480 - w) / 2, (640 - h) / 2, w, h);
             ctx.globalAlpha = 1;
-            ctx.fillStyle = "rgba(10,10,11,0.35)";
+            ctx.fillStyle = "rgba(4,4,4,0.4)";
             ctx.fillRect(0, 0, 480, 640);
 
-            ctx.fillStyle = "#f5f0e8";
-            ctx.font = "600 28px 'Cormorant Garamond', Georgia, serif";
-            ctx.fillText(caption, 40, 560);
-            ctx.fillStyle = "#c9a962";
-            ctx.font = "500 13px 'DM Sans', sans-serif";
-            ctx.fillText("NEURO · кадр " + (index + 1), 40, 592);
+            ctx.fillStyle = "#f0e9df";
+            ctx.font = "400 22px Unbounded, sans-serif";
+            ctx.fillText(caption, 36, 558);
+            ctx.fillStyle = "#ff3d5a";
+            ctx.font = "300 11px Geologica, sans-serif";
+            ctx.fillText("NEURO · FRAME " + String(index + 1).padStart(2, "0"), 36, 588);
 
             resolve(canvas.toDataURL("image/jpeg", 0.92));
           };
@@ -684,14 +1172,9 @@
           shots.push({
             caption: CAPTIONS[i],
             url,
-            prompt:
-              analysis.masterPrompt +
-              " Style: " +
-              style.fragment +
-              ". " +
-              state.wish,
+            prompt: analysis.masterPrompt + " Style: " + style.fragment + ". " + state.wish,
           });
-          await new Promise((r) => setTimeout(r, 400));
+          await new Promise((r) => setTimeout(r, 350));
         }
 
         state.shots = shots;
@@ -738,6 +1221,7 @@
         $("hero-img").src = shot.url;
         $("hero-img").alt = shot.caption;
         $("hero-caption").textContent = shot.caption;
+        $("frame-num").textContent = String(state.activeShot + 1).padStart(2, "0");
       }
 
       $("dropzone").addEventListener("click", () => $("file-input").click());

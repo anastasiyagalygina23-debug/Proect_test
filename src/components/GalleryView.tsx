@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Marquee } from "@/components/Marquee";
 import type { GallerySession } from "@/types/session";
 
 export function GalleryView({ session }: { session: GallerySession }) {
@@ -10,56 +11,69 @@ export function GalleryView({ session }: { session: GallerySession }) {
 
   return (
     <div className="min-h-screen pb-20">
-      <nav className="flex items-center justify-between px-6 py-6 md:px-12">
-        <Link href="/" className="text-xs uppercase tracking-[0.3em] text-gold">
+      <Marquee />
+
+      <nav className="flex items-center justify-between px-5 py-6 md:px-12">
+        <Link href="/" className="label-editorial hover:text-accent">
           Нейрофотограф
         </Link>
         {session.demo && (
-          <span className="rounded-full border border-gold/30 px-3 py-1 text-xs text-gold">
-            Демо-режим
+          <span className="border border-champagne/40 px-3 py-1 text-[0.62rem] uppercase tracking-widest text-champagne">
+            Demo
           </span>
         )}
       </nav>
 
-      <header className="px-6 md:px-12 animate-fade-up">
-        <p className="text-xs uppercase tracking-widest text-muted">
+      <header className="relative px-5 md:px-12 animate-fade-up">
+        <p className="label-editorial">
           {new Date(session.createdAt).toLocaleDateString("ru-RU", {
             day: "numeric",
             month: "long",
             year: "numeric",
           })}
         </p>
-        <h1 className="mt-2 font-display text-4xl md:text-6xl">{session.styleTitle}</h1>
-        <p className="mt-4 max-w-2xl text-muted">{session.interpretedWish}</p>
+        <h1 className="mt-3 font-display text-[clamp(2.5rem,8vw,4.5rem)] font-light leading-none">
+          {session.styleTitle}
+        </h1>
+        <p className="mt-6 max-w-xl text-whisper">{session.interpretedWish}</p>
+        <span
+          className="pointer-events-none absolute right-6 top-0 hidden select-none font-display text-[6rem] font-extralight text-paper/[0.04] md:block"
+          aria-hidden
+        >
+          {String(active + 1).padStart(2, "0")}
+        </span>
       </header>
 
-      <div className="mt-12 grid gap-8 lg:grid-cols-[1.2fr,1fr] lg:px-12">
-        <div className="px-6 lg:px-0">
+      <div className="mt-14 grid gap-10 lg:grid-cols-[1.25fr,0.75fr] lg:gap-12 lg:px-12">
+        <div className="px-5 lg:px-0">
           {shot && (
-            <figure className="overflow-hidden rounded-sm bg-black/40">
+            <figure className="relative border border-line bg-void">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={shot.url}
                 alt={shot.caption}
-                className="mx-auto max-h-[75vh] w-full object-contain"
+                className="mx-auto max-h-[78vh] w-full object-contain"
               />
-              <figcaption className="border-t border-white/10 px-6 py-4 font-display text-xl">
-                {shot.caption}
+              <figcaption className="flex items-baseline justify-between border-t border-line px-6 py-4">
+                <span className="font-display text-xl">{shot.caption}</span>
+                <span className="text-[0.65rem] uppercase tracking-widest text-whisper">Frame</span>
               </figcaption>
             </figure>
           )}
         </div>
 
-        <aside className="px-6 lg:px-0">
-          <p className="text-xs uppercase tracking-widest text-gold">Серия</p>
-          <div className="mt-4 grid grid-cols-2 gap-3">
+        <aside className="px-5 lg:px-0 lg:pt-8">
+          <p className="label-editorial">Contact sheet</p>
+          <div className="mt-4 grid grid-cols-2 gap-2">
             {session.shots.map((s, i) => (
               <button
                 key={s.id}
                 type="button"
                 onClick={() => setActive(i)}
-                className={`overflow-hidden rounded-lg border transition ${
-                  i === active ? "border-gold ring-1 ring-gold" : "border-white/10 opacity-70 hover:opacity-100"
+                className={`overflow-hidden border transition ${
+                  i === active
+                    ? "border-accent opacity-100 ring-1 ring-accent"
+                    : "border-line opacity-60 hover:opacity-100"
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -68,20 +82,13 @@ export function GalleryView({ session }: { session: GallerySession }) {
             ))}
           </div>
 
-          <div className="mt-10 rounded-xl border border-white/10 p-5">
-            <p className="text-xs uppercase text-muted">Исходное селфи</p>
+          <div className="mt-10 border border-line p-5">
+            <p className="label-editorial">Reference</p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={session.selfieUrl}
-              alt="Селфи"
-              className="mt-3 w-24 rounded-lg object-cover"
-            />
+            <img src={session.selfieUrl} alt="Селфи" className="mt-4 w-20 border border-line object-cover" />
           </div>
 
-          <Link
-            href="/"
-            className="mt-8 inline-block rounded-full border border-gold/50 px-6 py-2.5 text-sm uppercase tracking-wider hover:bg-gold/10"
-          >
+          <Link href="/" className="btn-ghost mt-8">
             Новая съёмка
           </Link>
         </aside>
